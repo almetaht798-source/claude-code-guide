@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude Code 专线接入指南</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3350;
+      --accent: #7c6af7;
+      --accent2: #5eead4;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --code-bg: #0d1117;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #1a1d27 0%, #16192a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .header-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .logo {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    header h1 { font-size: 1.15rem; font-weight: 600; }
+    .badge {
+      margin-left: auto;
+      background: linear-gradient(90deg, #7c6af7, #5eead4);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: 860px;
+      margin: 60px auto 0;
+      padding: 0 24px;
+      text-align: center;
+    }
+    .hero h2 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #e2e8f0, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 500px;
+      margin: 0 auto 40px;
+    }
+    .api-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      margin-bottom: 60px;
+    }
+    .api-box label {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .api-box span {
+      font-family: 'Consolas', monospace;
+      font-size: 0.95rem;
+      color: var(--accent2);
+    }
+
+    /* ── Steps container ── */
+    .steps {
+      max-width: 860px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* ── Step card ── */
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+    .step:hover { border-color: var(--accent); }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .step-num {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step-title { font-weight: 600; font-size: 1.05rem; }
+    .step-sub { color: var(--text-muted); font-size: 0.82rem; margin-top: 2px; }
+    .step-skip {
+      margin-left: auto;
+      background: var(--surface2);
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+
+    .step-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+
+    /* ── Code block ── */
+    .code-wrap {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .code-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      background: #161b22;
+      border-bottom: 1px solid var(--border);
+    }
+    .code-bar .lang { color: var(--text-muted); font-size: 0.75rem; font-family: monospace; }
+    .copy-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .copy-btn.copied { border-color: var(--success); color: var(--success); }
+
+    pre {
+      padding: 16px 18px;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Fira Code', monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+    .kw  { color: #ff7b72; }
+    .str { color: #a5d6ff; }
+    .key { color: var(--accent2); }
+    .cmt { color: #6e7681; font-style: italic; }
+    .num { color: #f2cc60; }
+
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: 6px; margin-bottom: 4px; }
+    .tab {
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: none;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Info box ── */
+    .info {
+      display: flex;
+      gap: 10px;
+      background: rgba(124,106,247,.1);
+      border: 1px solid rgba(124,106,247,.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+    .info .icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    .warn {
+      background: rgba(245,158,11,.08);
+      border-color: rgba(245,158,11,.3);
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 32px 24px;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="header-inner">
+    <div class="logo">🤖</div>
+    <h1>Claude Code 接入指南</h1>
+    <div class="badge">🎉 专线加速</div>
+  </div>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+  <h2>Claude Code<br>专线快速接入</h2>
+  <p>高速稳定的 Claude API 中转服务，即开即用，按步骤完成配置。</p>
+  <div class="api-box">
+    <label>API Base URL</label>
+    <span>https://bestaigate.top</span>
+  </div>
+</div>
+
+<!-- Steps -->
+<div class="steps">
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title">安装 Git</div>
+        <div class="step-sub">Windows 环境必装前置依赖</div>
+      </div>
+      <div class="step-skip">如已安装可跳过</div>
+    </div>
+    <div class="step-body">
+      <div class="info">
+        <span class="icon">ℹ️</span>
+        <span>系统要求：Windows 10+ · 需要 Git for Windows</span>
+      </div>
+      <div class="code-wrap">
+        <div class="code-bar">
+          <span class="lang">powershell</span>
+          <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        </div>
+        <pre>winget install --id Git.Git -e --source winget</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">安装 Claude Code</div>
+        <div class="step-sub">三种安装方式，任选其一</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="tabs" id="install-tabs">
+        <button class="tab active" onclick="switchTab('install', 0, this)">PowerShell（推荐）</button>
+        <button class="tab" onclick="switchTab('install', 1, this)">CMD</button>
+        <button class="tab" onclick="switchTab('install', 2, this)">WinGet</button>
+      </div>
+      <div id="install-panel-0" class="tab-panel active">
+        <div class="code-wrap">
+          <div class="code-bar">
+            <span class="lang">powershell</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <pre>irm https://claude.ai/install.ps1 | iex</pre>
+        </div>
+      </div>
+      <div id="install-panel-1" class="tab-panel">
+        <div class="code-wrap">
+          <div class="code-bar">
+            <span class="lang">cmd</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <pre>curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd</pre>
+        </div>
+      </div>
+      <div id="install-panel-2" class="tab-panel">
+        <div class="code-wrap">
+          <div class="code-bar">
+            <span class="lang">powershell</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <pre>winget install Anthropic.ClaudeCode</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title">配置 settings.json</div>
+        <div class="step-sub">设置 API 密钥与专线地址（推荐）</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="info warn">
+        <span class="icon">⚠️</span>
+        <span>请将 <code>sk-xxxxxx</code> 替换为你在控制台生成的 API 密钥，妥善保管，切勿公开。</span>
+      </div>
+      <div class="info">
+        <span class="icon">📁</span>
+        <span>配置文件位置：<code>%USERPROFILE%\.claude\settings.json</code></span>
+      </div>
+      <div class="code-wrap">
+        <div class="code-bar">
+          <span class="lang">settings.json</span>
+          <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        </div>
+        <pre>{
+  <span class="key">"env"</span>: {
+    <span class="key">"ANTHROPIC_API_KEY"</span>: <span class="str">"sk-xxxxxx"</span>,  <span class="cmt">// 替换为你的 API Key</span>
+    <span class="key">"ANTHROPIC_BASE_URL"</span>: <span class="str">"https://bestaigate.top"</span>
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div>
+        <div class="step-title">配置 .claude.json</div>
+        <div class="step-sub">跳过新手引导，直接进入工作模式</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="info">
+        <span class="icon">📁</span>
+        <span>配置文件位置：<code>%USERPROFILE%\.claude.json</code>（在已有文件中追加此 key，重启后生效）</span>
+      </div>
+      <div class="code-wrap">
+        <div class="code-bar">
+          <span class="lang">.claude.json</span>
+          <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        </div>
+        <pre>{
+  <span class="key">"hasCompletedOnboarding"</span>: <span class="kw">true</span>
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div>
+        <div class="step-title">启动 Claude Code</div>
+        <div class="step-sub">配置完成，直接运行</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="code-wrap">
+        <div class="code-bar">
+          <span class="lang">terminal</span>
+          <button class="copy-btn" onclick="copyCode(this)">复制</button>
+        </div>
+        <pre>claude</pre>
+      </div>
+      <div class="info">
+        <span class="icon">✅</span>
+        <span>配置完成后运行即可通过专线连接，享受高速稳定的 Claude API 服务。</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer>
+  <p>API 接入服务由 <a href="https://bestaigate.top" target="_blank">bestaigate.top</a> 提供 · 本指南仅供内部参考</p>
+  <p style="margin-top:8px;">© 2026 Claude Code 接入指南 · 如有问题请联系管理员</p>
+</footer>
+
+<script>
+  function copyCode(btn) {
+    const pre = btn.closest('.code-wrap').querySelector('pre');
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✅ 已复制';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  function switchTab(group, idx, clickedBtn) {
+    document.querySelectorAll(`#${group}-tabs .tab`).forEach((t, i) => {
+      t.classList.toggle('active', i === idx);
+      const panel = document.getElementById(`${group}-panel-${i}`);
+      if (panel) panel.classList.toggle('active', i === idx);
+    });
+  }
+</script>
+</body>
+</html>
