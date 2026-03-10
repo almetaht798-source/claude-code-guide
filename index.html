@@ -426,6 +426,70 @@
     </div>
   </div>
 
+  <!-- More Proxy Nodes -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">💡</div>
+      <div>
+        <div class="step-title">更多公益节点推荐</div>
+        <div class="step-sub">社区维护的免费/优质 Claude API 中转服务</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="info warn">
+        <span class="icon">⚠️</span>
+        <span>公益节点稳定性可能波动，建议收藏多个备用。使用前请阅读各节点的使用条款。</span>
+      </div>
+
+      <!-- Node 1: Linux.do -->
+      <div class="info">
+        <span class="icon">🌐</span>
+        <div style="flex: 1;">
+          <div style="font-weight: 600; color: var(--text); margin-bottom: 6px;">Linux.do 论坛公益节点</div>
+          <div style="margin-bottom: 8px;">社区驱动的免费 Claude API 中转服务，需要论坛账号认证。</div>
+          <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem;">
+            <div><strong>Base URL:</strong> <code style="color: var(--accent2);">https://api.linux.do/v1</code></div>
+            <div><strong>获取方式:</strong> 注册 <a href="https://linux.do" target="_blank" style="color: var(--accent);">linux.do</a> 论坛账号，在个人设置中生成 API Key</div>
+            <div><strong>特点:</strong> 免费额度充足 · 社区支持 · 需要论坛活跃度</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Node 2: Aurora -->
+      <div class="info">
+        <span class="icon">🚀</span>
+        <div style="flex: 1;">
+          <div style="font-weight: 600; color: var(--text); margin-bottom: 6px;">Aurora 开源中转项目</div>
+          <div style="margin-bottom: 8px;">开源的 Claude API 代理服务，支持自部署或使用公共实例。</div>
+          <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem;">
+            <div><strong>Base URL:</strong> <code style="color: var(--accent2);">https://api.aurora.chat/v1</code></div>
+            <div><strong>获取方式:</strong> 访问 <a href="https://aurora.chat" target="_blank" style="color: var(--accent);">aurora.chat</a> 注册账号，控制台生成密钥</div>
+            <div><strong>特点:</strong> 开源透明 · 支持多模型 · 可自建部署</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Node 3: ClaudeAPI.ai -->
+      <div class="info">
+        <span class="icon">⚡</span>
+        <div style="flex: 1;">
+          <div style="font-weight: 600; color: var(--text); margin-bottom: 6px;">ClaudeAPI.ai 中转服务</div>
+          <div style="margin-bottom: 8px;">稳定的第三方 Claude API 中转，提供免费试用额度。</div>
+          <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem;">
+            <div><strong>Base URL:</strong> <code style="color: var(--accent2);">https://api.claudeapi.ai/v1</code></div>
+            <div><strong>获取方式:</strong> 访问 <a href="https://claudeapi.ai" target="_blank" style="color: var(--accent);">claudeapi.ai</a> 注册并获取 API Key</div>
+            <div><strong>特点:</strong> 响应速度快 · 新用户免费额度 · 付费套餐可选</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info">
+        <span class="icon">💡</span>
+        <span>配置方法：将上述任一 Base URL 替换到 <code>settings.json</code> 中的 <code>ANTHROPIC_BASE_URL</code> 字段即可。</span>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- Footer -->
